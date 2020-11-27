@@ -16,8 +16,7 @@ main()
 
   clearScreen(COLOR_BLUE);
 
-  drawString8x12(20,20, "hello", COLOR_GREEN, COLOR_RED);
-
-  fillRectangle(30,30, 60, 60, COLOR_ORANGE);
+  for (u_char c = 0; c < 90; c++)
+    drawPixel((screenWidth/2) + c,  (screenHeight /2) + c, COLOR_WHITE);
   
 }
