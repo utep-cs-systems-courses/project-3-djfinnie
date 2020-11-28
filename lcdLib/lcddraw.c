@@ -77,8 +77,8 @@ void drawChar11x16(u_char rcol, u_char rrow, char c,
 {
   u_char col = 0;
   u_char row = 0;
-  u_char bit = 0x0001;
-  u_char oc = c - 0x20;
+  unsigned short bit = 0x0001;
+  unsigned short oc = c - 0x20;
 
   lcd_setArea(rcol, rrow, rcol + 10, rrow + 16); /* relative to requested col/row */
   while (row < 17) {
@@ -113,7 +113,6 @@ void drawChar8x12(u_char rcol, u_char rrow, char c,
     row++;
   }
 }
-
 
 /** Draw string at col,row
  *  Type:

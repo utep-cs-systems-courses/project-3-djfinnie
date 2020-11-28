@@ -7,6 +7,8 @@
 
 short redrawScreen = 1;
 u_int fontFgColor = COLOR_GREEN;
+u_int outsideFigureColor = COLOR_WHITE;
+u_int insideFigureColor = COLOR_BLUE;
 
 void wdt_c_handler()
 {
@@ -19,7 +21,9 @@ void wdt_c_handler()
   
       secCount = 0;
       fontFgColor = (fontFgColor == COLOR_GREEN) ? COLOR_WHITE : COLOR_GREEN;
-
+      outsideFigureColor = (outsideFigureColor == COLOR_WHITE) ? COLOR_BLACK : COLOR_WHITE;
+      insideFigureColor = (insideFigureColor == COLOR_BLUE) ? COLOR_GREEN : COLOR_BLUE;
+      
       redrawScreen = 1; 
   }
 }
@@ -44,31 +48,30 @@ void main()
 
       redrawScreen = 0;
 
-      drawString11x16(20,20, "hello", fontFgColor, COLOR_BLUE);
+      drawString11x16(20,20, "WOAH", fontFgColor, COLOR_BLUE);
 
-      char center = 10;
-      for (u_char r = 0; r < 2*center; r++) {
-	for (u_char c = 0; c < 2*center; c++) {
-	  drawPixel(c+(center-5), r+(center-5), fontFgColor);
-	}
+      char offc = 30;
+      char offr = 90;
+      
+      for (char r = 0; r < 11; r++)
+	for (char c = 0; c < 11; c++) {
+	  drawPixel(c + (offc - 5), r + (offr - 5), outsideFigureColor);
       }
 
-      for (u_char r = 0; r < center-1; r++) {
-	for (u_char c = 0; c < center-1; c++) {
-	  drawPixel(c+(center-2), r+(center-2), COLOR_BLUE);
-	}
+      for (char r = 0; r <  5; r++)
+	for (char c = 0; c <= r; c++) {
+	  drawPixel((offc -2) + c, r + (offr-2), insideFigureColor);
+	  drawPixel(offc - c, r - offr, insideFigureColor);
       }
       
-      drawString5x7(50,50, "3 on me!", fontFgColor, COLOR_BLUE);
+      drawString11x16(30,50, "3 on me!", fontFgColor, COLOR_BLUE);
+      drawString11x16(50,120, "dang", fontFgColor, COLOR_BLUE);
 
     }
-
     P1OUT &= ~LED_GREEN;/* green off */
 
     or_sr(0x10);/**< CPU OFF */
 
     P1OUT |= LED_GREEN;/* green on */
-
   }
-
 }
