@@ -1,6 +1,12 @@
 #ifndef stateMachine_included
 #define stateMachine_included
 
+void imDown_button1();
+
+void changeColor();
+
+void screenChange();
+
 void state_advance();
 
 void up_state();
