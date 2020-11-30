@@ -27,7 +27,6 @@ void wdt_c_handler()	/* 250 interrupts/sec */
   secCount ++;
     
   if (secCount == 250) { // once/sec 
-  
       secCount = 0;
       redrawScreen = 1;
   }
@@ -62,21 +61,20 @@ int main(void)
         if (secCount < 1) clearScreen(COLOR_BLUE);
 	secCount++;
 	screenChange();
+	diagonalLine(120, 10);
+	diagonalLine(-120, 10);
+	diagonalLine(105, 10);
 	break;
-
+	
       case 1:
-	imDown_button1();
-	secCount++;
-	if (secCount >= 250) {
-	  buzzer_set_period(0);
-	  count = 0;
-	  
-	}
+	if (secCount > 1) clearScreen(COLOR_RED);
+	buzzer_set_period(0);
+	imDown_button1();	
 	break;
 
       case 2:
 	button3_siren();
-	if (++count == 250) {
+	if (++count == 65) {
 	  blink_dim();
 	  count = 0;
 	}
@@ -85,6 +83,10 @@ int main(void)
       case 3:
 	button4_off();
 	secCount = 0;
+	startingScreen();
+	square(screenHeight-30, 15);
+	square(screenHeight-30, 60);
+	square(screenHeight-30, 105);
 	break;
       }
       redrawScreen = 0;

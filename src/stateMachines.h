@@ -1,6 +1,12 @@
 #ifndef stateMachine_included
 #define stateMachine_included
 
+void diagonalLine(short offc, short offr);
+
+void square(short offc, short offr);
+
+void startingScreen();
+
 void imDown_button1();
 
 void changeColor();

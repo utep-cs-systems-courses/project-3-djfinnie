@@ -13,19 +13,67 @@ short redrawScreen = 1;
 u_int fontFgColor = COLOR_GREEN;
 u_int outsideFigureColor = COLOR_WHITE;
 u_int insideFigureColor = COLOR_BLUE;
+u_int boomFgColor = COLOR_BLUE;
+u_int dangFgColor = COLOR_YELLOW;
 
-void imDown_button1() {
-  buzzer_set_period(2000000/1000);
-  count++;
-  if (count == 250){
-    buzzer_set_period(0);
-    buzzer_set_period(100);
-    count = 0;
-    // P1OUT |= LED_GREEN;
+void diagonalLine(short offc, short offr)
+{
+  for (char rc = 1; rc <= 10; rc++) {
+    drawPixel(rc + offr, rc + offc, COLOR_WHITE);
+    drawPixel(-rc + offr, -rc + offc, COLOR_WHITE);
   }
 }
+
+  void startingScreen()
+{
+  drawString11x16(5, screenHeight/4, "ACTIVISION", COLOR_WHITE, COLOR_BLACK);
+  drawString5x7(20, screenHeight/2, "Press SWITCH 0", COLOR_WHITE, COLOR_BLACK);
+  drawString5x7(33, screenHeight-10-(screenHeight/3), "to resume", COLOR_WHITE, COLOR_BLACK);
+}
+
+void square(short offc, short offr)
+{
+  changeColor();
+  if (redrawScreen) {
+    redrawScreen = 0;
+    
+    for (char r = 0; r < 20; r++)
+      for (char c= 0; c < 20; c++) {
+	drawPixel(r + (offr - 5), c + (offc - 5), outsideFigureColor);
+      }
+  
+    for (char r = 0; r < 10; r++)
+      for (char c= 0; c < 10; c++) {
+	drawPixel(r + (offr), c + (offc), COLOR_BLACK);
+      }
+  }
+  P1OUT &= ~LED_GREEN;/* green off */
+
+  or_sr(0x10);/**< CPU OFF */
+
+  P1OUT |= LED_GREEN;/* green on */
+}
+
+void imDown_button1()
+{
+  buzzer_set_period(2000000/1000);
+  if (count == 62) {
+    count = 0;
+    buzzer_set_period(0);
+    blink_dim();
+  }
+  changeColor();
+  if (redrawScreen) {
+    redrawScreen = 0;
+    drawString11x16(screenWidth/2, screenHeight/2, "Dang.", dangFgColor, COLOR_RED);
+  }
+  or_sr(0x10);/**< CPU OFF */
+}
+
 void changeColor()
 {
+  dangFgColor = (dangFgColor == COLOR_YELLOW) ? COLOR_BLACK : COLOR_YELLOW;
+  boomFgColor = (boomFgColor == COLOR_BLUE) ? COLOR_RED : COLOR_BLUE;
   fontFgColor = (fontFgColor == COLOR_GREEN) ? COLOR_WHITE : COLOR_GREEN;
   outsideFigureColor = (outsideFigureColor == COLOR_WHITE) ? COLOR_BLACK : COLOR_WHITE;
   insideFigureColor = (insideFigureColor == COLOR_BLUE) ? COLOR_GREEN : COLOR_BLUE;
@@ -35,8 +83,7 @@ void screenChange()
 {
   changeColor();
   if (redrawScreen) {
-    //clearScreen(COLOR_BLUE);
-      
+         
     redrawScreen = 0;
 
     drawString11x16(20,20, "WOAH", fontFgColor, COLOR_BLUE);
@@ -55,7 +102,8 @@ void screenChange()
       }
       
     drawString11x16(30,50, "3 on me!", fontFgColor, COLOR_BLUE);
-    drawString11x16(50,120, "dang", fontFgColor, COLOR_BLUE);
+    drawString11x16(50,90, "BOOM!", boomFgColor, COLOR_BLUE);
+    drawString11x16(50,120, "BOOM!", boomFgColor, COLOR_BLUE);
 
   }
   P1OUT &= ~LED_GREEN;/* green off */
@@ -126,6 +174,18 @@ void button3_siren()
 {
   state_advance();
   buzzer_advance();
+  char center = 10;
+  
+    for (char r = 0; r <  11; r++)
+      for (char c = 0; c <= r; c++) {
+	drawPixel(center + c, center+ r, COLOR_YELLOW);
+	drawPixel(center - c, center+ r, COLOR_YELLOW);
+      }
+    for (char c = 0; c <  11; c++)
+      for (char r = 11; r <= (2*11)-c; r++) {
+	drawPixel(center + c, center+ r, COLOR_YELLOW);
+	drawPixel(center - c, center + r, COLOR_YELLOW);
+      }
 
 }
 
@@ -145,13 +205,15 @@ void blink_dim() {
   switch (state)
     {
     case 0:
-      red_on = 1;
-      green_on = 1;
-      state++;
+      red_on = 0;
       break;
     case 1:
-      red_on = 0;
-      green_on = 0;
+    case 2:
+    case 3:
+      red_on = 1;
+      state = 0;
+      break;
+    default:
       state = 0;
       break;
     }
