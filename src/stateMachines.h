@@ -1,9 +1,9 @@
 #ifndef stateMachine_included
 #define stateMachine_included
 
-void diagonalLine(short offc, short offr);
+void draw_square(short offc, short offr);
 
-void square(short offc, short offr);
+void diagonalLine(short offc, short offr);
 
 void startingScreen();
 
@@ -11,7 +11,7 @@ void imDown_button1();
 
 void changeColor();
 
-void screenChange();
+void gameResume_button0();
 
 void state_advance();
 
@@ -19,9 +19,9 @@ void up_state();
 
 void down_state();
 
-void button3_siren();
+void button2_siren();
 
-void button4_off();
+void button3_off();
 
 void blink_dim();
 

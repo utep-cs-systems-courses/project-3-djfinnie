@@ -16,18 +16,18 @@ extern u_int fontFgColor;
 extern u_int outsideFigureColor; 
 extern u_int insideFigureColor;
 
+int stateAdvance();
 
 
 void wdt_c_handler()	/* 250 interrupts/sec */
 {
   
   static int secCount = 0;
-  static char state = 0;
   
   secCount ++;
     
   if (secCount == 250) { // once/sec 
-      secCount = 0;
+    secCount = 0;
       redrawScreen = 1;
   }
 }
@@ -52,15 +52,19 @@ int main(void)
   switch_pressed = 3;
   clearScreen(COLOR_BLUE);
   static int secCount = 0;
+  static int state = 0;
+  static char isBlack = 0;
+
   
   while (1) {
     if (redrawScreen) {
-	
+      int success = 0;
       switch (switch_pressed) {
       case 0:
         if (secCount < 1) clearScreen(COLOR_BLUE);
 	secCount++;
-	screenChange();
+	//success = stateAdvance(1);
+	gameResume_button0();
 	diagonalLine(120, 10);
 	diagonalLine(-120, 10);
 	diagonalLine(105, 10);
@@ -69,11 +73,13 @@ int main(void)
       case 1:
 	if (secCount > 1) clearScreen(COLOR_RED);
 	buzzer_set_period(0);
-	imDown_button1();	
+	//success = stateAdvance(2);	
+	imDown_button1();
 	break;
 
       case 2:
-	button3_siren();
+	//success = stateAdvance(3);
+	button2_siren();
 	if (++count == 65) {
 	  blink_dim();
 	  count = 0;
@@ -81,16 +87,39 @@ int main(void)
 	break;
 
       case 3:
-	button4_off();
+	if (isBlack < 1) {
+	  isBlack = 1;
+	  clearScreen(COLOR_BLACK);
+	}
+	button3_off();
 	secCount = 0;
+	
 	startingScreen();
-	square(screenHeight-30, 15);
-	square(screenHeight-30, 60);
-	square(screenHeight-30, 105);
-	break;
+	stateAdvance();
+	/*
+	switch(state) {
+	case 0:
+	  draw_square(screenHeight-30, 15);
+	  state++;
+	  break;
+	case 1:
+	  draw_square(screenHeight-30, 60);
+	  state++;
+	  break;
+	case 2:
+	  draw_square(screenHeight-30, 105);
+	  state++;
+	  break;
+	default:
+	  state =  0;
+	  isBlack = 0;
+	  break;
+	}
+	*/
       }
       redrawScreen = 0;
-    }
+
+    }    
     
     P1OUT &= ~LED_GREEN;
     or_sr(0x10);

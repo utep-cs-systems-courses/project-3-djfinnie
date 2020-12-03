@@ -11,7 +11,7 @@ AS              = msp430-elf-gcc -mmcu=${CPU} -c
 all: go.elf 
 
 #additional rules for files
-go.elf: ${COMMON_OBJECTS} wdt_handler.o buzzer.o stateMachines.o p2_interrupt_handler.o led.o switches.o main.o ../lib/libTimer.a
+go.elf: ${COMMON_OBJECTS} wdt_handler.o buzzer.o stateMachines.o p2_interrupt_handler.o led.o switches.o main.o stateAdvance.o ../lib/libTimer.a
 	${CC} ${CFLAGS} ${LDFLAGS} -o $@ $^ -lTimer -lLcd
 
 load: go.elf

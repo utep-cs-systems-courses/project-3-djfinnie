@@ -16,22 +16,7 @@ u_int insideFigureColor = COLOR_BLUE;
 u_int boomFgColor = COLOR_BLUE;
 u_int dangFgColor = COLOR_YELLOW;
 
-void diagonalLine(short offc, short offr)
-{
-  for (char rc = 1; rc <= 10; rc++) {
-    drawPixel(rc + offr, rc + offc, COLOR_WHITE);
-    drawPixel(-rc + offr, -rc + offc, COLOR_WHITE);
-  }
-}
-
-  void startingScreen()
-{
-  drawString11x16(5, screenHeight/4, "ACTIVISION", COLOR_WHITE, COLOR_BLACK);
-  drawString5x7(20, screenHeight/2, "Press SWITCH 0", COLOR_WHITE, COLOR_BLACK);
-  drawString5x7(33, screenHeight-10-(screenHeight/3), "to resume", COLOR_WHITE, COLOR_BLACK);
-}
-
-void square(short offc, short offr)
+void draw_square(short offc, short offr)
 {
   changeColor();
   if (redrawScreen) {
@@ -47,11 +32,21 @@ void square(short offc, short offr)
 	drawPixel(r + (offr), c + (offc), COLOR_BLACK);
       }
   }
-  P1OUT &= ~LED_GREEN;/* green off */
+}
 
-  or_sr(0x10);/**< CPU OFF */
+void diagonalLine(short offc, short offr)
+{
+  for (char rc = 1; rc <= 10; rc++) {
+    drawPixel(rc + offr, rc + offc, COLOR_WHITE);
+    drawPixel(-rc + offr, -rc + offc, COLOR_WHITE);
+  }
+}
 
-  P1OUT |= LED_GREEN;/* green on */
+void startingScreen()
+{
+  drawString11x16(5, screenHeight/4, "ACTIVISION", COLOR_WHITE, COLOR_BLACK);
+  drawString5x7(20, screenHeight/2, "Press SWITCH 0", COLOR_WHITE, COLOR_BLACK);
+  drawString5x7(33, screenHeight-10-(screenHeight/3), "to resume", COLOR_WHITE, COLOR_BLACK);
 }
 
 void imDown_button1()
@@ -67,7 +62,6 @@ void imDown_button1()
     redrawScreen = 0;
     drawString11x16(screenWidth/2, screenHeight/2, "Dang.", dangFgColor, COLOR_RED);
   }
-  or_sr(0x10);/**< CPU OFF */
 }
 
 void changeColor()
@@ -79,7 +73,7 @@ void changeColor()
   insideFigureColor = (insideFigureColor == COLOR_BLUE) ? COLOR_GREEN : COLOR_BLUE;
 }
 
-void screenChange()
+void gameResume_button0()
 {
   changeColor();
   if (redrawScreen) {
@@ -106,11 +100,6 @@ void screenChange()
     drawString11x16(50,120, "BOOM!", boomFgColor, COLOR_BLUE);
 
   }
-  P1OUT &= ~LED_GREEN;/* green off */
-
-  or_sr(0x10);/**< CPU OFF */
-
-  P1OUT |= LED_GREEN;/* green on */
 }
 
 char toggle_red()		/* always toggle! */
@@ -170,34 +159,22 @@ void main_state_advance()
     }
 }
 
-void button3_siren()
+void button2_siren()
 {
   state_advance();
   buzzer_advance();
-  char center = 10;
-  
-    for (char r = 0; r <  11; r++)
-      for (char c = 0; c <= r; c++) {
-	drawPixel(center + c, center+ r, COLOR_YELLOW);
-	drawPixel(center - c, center+ r, COLOR_YELLOW);
-      }
-    for (char c = 0; c <  11; c++)
-      for (char r = 11; r <= (2*11)-c; r++) {
-	drawPixel(center + c, center+ r, COLOR_YELLOW);
-	drawPixel(center - c, center + r, COLOR_YELLOW);
-      }
-
+  u_char center = 10;
+  drawDiamond(center);
 }
 
-void button4_off()
+void button3_off()
 {
-  clearScreen(COLOR_BLACK);
   buzzer_set_period(0);
   green_on = 0;
   red_on = 0;
   led_changed = 1;
   led_update();
- 
+  or_sr(0x8);
 }
 
 void blink_dim() {
@@ -220,6 +197,7 @@ void blink_dim() {
   led_changed = 1;
   led_update();
 }
+
 
 void up_state()
 {

@@ -7,7 +7,7 @@ give audio for a story
 1. Use make command to complie all files in the project 3 directory 
 2. Open the src directory
 3. Use - make load - to run the program
-4. To erase all compliled files use - make clean -
+4. To erase all compiled files use - make clean -
 
 ## How it works
 1. The first screen will show the activision pause screen
