@@ -10,6 +10,8 @@
 
 extern char switch_pressed;
 static int count = 0;
+char state = 0;
+
 
 extern short redrawScreen;
 extern u_int fontFgColor;
@@ -52,38 +54,36 @@ int main(void)
   switch_pressed = 3;
   clearScreen(COLOR_BLUE);
   static int secCount = 0;
-  static int state = 0;
   static char isBlack = 0;
-
+  
   
   while (1) {
     if (redrawScreen) {
-      int success = 0;
       switch (switch_pressed) {
       case 0:
         if (secCount < 1) clearScreen(COLOR_BLUE);
 	secCount++;
-	//success = stateAdvance(1);
 	gameResume_button0();
 	diagonalLine(120, 10);
 	diagonalLine(-120, 10);
 	diagonalLine(105, 10);
+	isBlack = 0;
 	break;
 	
       case 1:
 	if (secCount > 1) clearScreen(COLOR_RED);
 	buzzer_set_period(0);
-	//success = stateAdvance(2);	
 	imDown_button1();
+	isBlack = 0;
 	break;
 
       case 2:
-	//success = stateAdvance(3);
 	button2_siren();
 	if (++count == 65) {
 	  blink_dim();
 	  count = 0;
 	}
+	isBlack = 0;
 	break;
 
       case 3:
@@ -93,29 +93,10 @@ int main(void)
 	}
 	button3_off();
 	secCount = 0;
-	
+
 	startingScreen();
 	stateAdvance();
-	/*
-	switch(state) {
-	case 0:
-	  draw_square(screenHeight-30, 15);
-	  state++;
-	  break;
-	case 1:
-	  draw_square(screenHeight-30, 60);
-	  state++;
-	  break;
-	case 2:
-	  draw_square(screenHeight-30, 105);
-	  state++;
-	  break;
-	default:
-	  state =  0;
-	  isBlack = 0;
-	  break;
-	}
-	*/
+     
       }
       redrawScreen = 0;
 

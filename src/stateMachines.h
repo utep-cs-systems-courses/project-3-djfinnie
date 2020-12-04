@@ -1,6 +1,8 @@
 #ifndef stateMachine_included
 #define stateMachine_included
 
+extern char state;
+
 void draw_square(short offc, short offr);
 
 void diagonalLine(short offc, short offr);
