@@ -5,6 +5,8 @@
 #ifndef lcddraw_included
 #define lcddraw_included
 
+void drawDiamond(u_char center);
+
 /** Draw single pixel at col, row 
  *
  *  \param col Column to draw to

@@ -4,6 +4,19 @@
 #include "lcdutils.h"
 #include "lcddraw.h"
 
+void drawDiamond(u_char center)
+{
+  for (char r = 0; r <  11; r++)
+      for (char c = 0; c <= r; c++) {
+	drawPixel(center + c, center+ r, COLOR_YELLOW);
+	drawPixel(center - c, center+ r, COLOR_YELLOW);
+      }
+    for (char c = 0; c <  11; c++)
+      for (char r = 11; r <= (2*11)-c; r++) {
+	drawPixel(center + c, center+ r, COLOR_YELLOW);
+	drawPixel(center - c, center + r, COLOR_YELLOW);
+      }
+}
 
 /** Draw single pixel at x,row 
  *
@@ -11,6 +24,7 @@
  *  \param row Row to draw to
  *  \param colorBGR Color of pixel in BGR
  */
+
 void drawPixel(u_char col, u_char row, u_int colorBGR) 
 {
   lcd_setArea(col, row, col, row);
