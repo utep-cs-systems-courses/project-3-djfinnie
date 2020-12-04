@@ -19,7 +19,7 @@ extern u_int outsideFigureColor;
 extern u_int insideFigureColor;
 
 int stateAdvance();
-
+int isNegative(int val);
 
 void wdt_c_handler()	/* 250 interrupts/sec */
 {
@@ -67,23 +67,26 @@ int main(void)
 	diagonalLine(120, 10);
 	diagonalLine(-120, 10);
 	diagonalLine(105, 10);
-	isBlack = 0;
+	if (isNegative(-1))
+	  isBlack = 0;
 	break;
 	
       case 1:
 	if (secCount > 1) clearScreen(COLOR_RED);
 	buzzer_set_period(0);
 	imDown_button1();
-	isBlack = 0;
+	if (isNegative(0) == 0)
+	  isBlack = 0;
 	break;
 
       case 2:
+	isBlack = 0;
 	button2_siren();
 	if (++count == 65) {
 	  blink_dim();
 	  count = 0;
 	}
-	isBlack = 0;
+
 	break;
 
       case 3:
